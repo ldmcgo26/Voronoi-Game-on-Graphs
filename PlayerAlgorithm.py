@@ -11,8 +11,9 @@ class PlayerAlgorithm:
         #the graph
         self.graph = graph
         
-        #list of the players
+        #list of the players, which gives us each players controlled vertices and their value assessments
         self.players = players
     
-    def makeMove(self, ):
+    #This should 
+    def makeMove(self):
         pass
