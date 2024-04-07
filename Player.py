@@ -17,6 +17,7 @@ class Player:
         self.controlled_vertices: list[int] = []
 
         #set the controlled vertices
+        #need the graph in order to do this
         
 
     def calc_total_value(self):
