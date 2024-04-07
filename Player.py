@@ -18,6 +18,7 @@ class Player:
 
         #set the controlled vertices
         #need the graph in order to do this
+        #maybe don't set controlled vertices in the player class, that can be done in the player algorithm class?
         
 
     def calc_total_value(self):
