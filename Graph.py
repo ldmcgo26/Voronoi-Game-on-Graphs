@@ -76,5 +76,5 @@ class Graph:
 
 
 if __name__ == "__main__":
-    g = Graph(10, 0.5)
-    print(g._dists[0])
+    g = Graph(3, 0.5)
+    print(g._dists)
