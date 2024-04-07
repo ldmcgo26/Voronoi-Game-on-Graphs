@@ -15,11 +15,29 @@ class PlayerAlgorithm:
         self.players = players
 
         #maps players to their controlled vertices (includes their facilities and all vertices closest to their facilities)
-        self.controlled_vertices: dict[Player, list[int]]
+        self.controlled_vertices: dict[Player, list[int]] = {}
 
     #calculates each player's controlled vertices, maybe not necessary to do here? Maybe do in player class and pass the graph there as well?
-    def calc_controlled_vertices():
-        pass
+    def calc_controlled_vertices(self):
+        for player in self.players:
+            controlled_vertices = set()
+            for vertex in range(len(self.graph._dists)):
+                closest_player = self._find_closest_player(vertex)
+                if closest_player == player:
+                    controlled_vertices.add(vertex)
+            self.controlled_vertices[player] = list(controlled_vertices)
+
+    def _find_closest_player(self, vertex: int) -> Player:
+        min_distance = float('inf')
+        closest_player = None
+        for player in self.players:
+            for facility in player.facilities:
+                distance = self.graph._dists[vertex][facility]
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_player = player
+        return closest_player
+
     
     #This should make an untaken vertex one of the player's facilities.
     #QUESTION: Should this check whether or not the vertex is not already controlled by another player?
