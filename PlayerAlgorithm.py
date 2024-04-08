@@ -1,5 +1,6 @@
 from Graph import Graph
 from Player import Player
+import random as r
 
 class PlayerAlgorithm:
 
@@ -43,3 +44,11 @@ class PlayerAlgorithm:
     #Should this do anything else?
     def makeMove(self, vertex: int, playerIndex: int):
         self.players[playerIndex].add_facility(vertex)
+
+    #randomly enerate players with values assessments ranging from 1 to 5
+    def gen_players(self, num_players, num_vertices):
+        for i in range(num_players):
+            values = {}
+            for j in range(num_vertices):
+                values[j] = r.randint(1,5)
+            self.players.append(Player(values))
