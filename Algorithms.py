@@ -2,6 +2,7 @@ from PlayerAlgorithm import PlayerAlgorithm
 from Graph import Graph
 from Player import Player
 import random as r
+import copy
 
 num_players = 3
 num_vertices = 50
@@ -15,11 +16,11 @@ def gen_players(num_players, num_vertices):
         values = {}
         for j in range(num_vertices):
             values[j] = r.randint(1,5)
-        players.append(Player(values))
+        players.append(Player(copy.deepcopy(values)))  # Use deepcopy to create a new copy of values for each player
     return players
 
 def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:
-    all_vertices = set(range(len(playerAlgorithm.graph._dists)))
+    all_vertices = set(range(num_vertices))
     facility_vertices = set()
     for player in playerAlgorithm.players:
         facility_vertices.update(player.facilities)
@@ -43,7 +44,6 @@ if __name__ == "__main__":
     for i in range(num_players):
         player_algs.append('random')
 
-    #Random Algorithm
     for i in range(num_rounds):
         for j in range(num_players):
             if player_algs[j] == 'random':
@@ -52,8 +52,12 @@ if __name__ == "__main__":
                 next_facility = pick_max_vertex(pa)
             else:
                 next_facility = pick_max_uncontrolled(pa)
-            pa.makeMove(next_facility, players[j])
 
+            print(next_facility)
+            pa.makeMove(next_facility, j)
+
+    print(players[0].facilities)
+    print(players[1].facilities)
     pa.calc_controlled_vertices()
     
     for i in (pa.controlled_vertices.values()):
