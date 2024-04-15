@@ -1,5 +1,3 @@
-import igraph as ig
-import matplotlib.pyplot as plt
 import random as r
 import math as m
 

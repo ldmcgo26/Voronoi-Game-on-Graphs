@@ -2,10 +2,11 @@ from PlayerAlgorithm import PlayerAlgorithm
 from Graph import Graph
 from Player import Player
 import random as r
+from Visualize import showGraph
 
 num_players = 3
-num_vertices = 50
-edge_density = 0.5
+num_vertices = 12
+edge_density = 0.2
 num_rounds = 3
 
 #random algorithm
@@ -72,6 +73,7 @@ if __name__ == "__main__":
             elif player_algs[j] == 'uncontrolled max':
                 next_facility = pick_max_uncontrolled(pa, pa.players[j])
             pa.makeMove(next_facility, j)
+            showGraph(g, [next_facility])
 
 
     #Calculates who owns every vertex and prints out each player's controlled vertices

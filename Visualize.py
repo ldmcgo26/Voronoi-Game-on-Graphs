@@ -1,12 +1,14 @@
-if __name__ == "__main__":
+import igraph as ig
+import matplotlib.pyplot as plt
+from Graph import Graph
+import math as m
 
-    g = Graph(15, 0.2)
-    print(g._dists)
+def showGraph(g: Graph, facilities: list[int]):
 
     graph = ig.Graph(directed=False)
 
     # Add vertices
-    num_vertices = len(g._dists)
+    num_vertices = len(g._edgeDists)
     graph.add_vertices(num_vertices)
 
     # Add edges with distances
@@ -21,7 +23,7 @@ if __name__ == "__main__":
         target=ax,
         layout="circle", # print nodes in a circular layout
         vertex_size=30,
-        vertex_color=["steelblue"],
+        vertex_color=["blue" if vertex.index in facilities else "red" for vertex in graph.vs],
         vertex_frame_width=4.0,
         vertex_frame_color="white",
         edge_width=[.5],
