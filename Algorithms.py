@@ -73,6 +73,7 @@ if __name__ == "__main__":
                 next_facility = pick_max_uncontrolled(pa, pa.players[j])
             pa.makeMove(next_facility, j)
 
+
     #Calculates who owns every vertex and prints out each player's controlled vertices
     pa.calc_controlled_vertices()
     for i in (pa.controlled_vertices.values()):

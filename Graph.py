@@ -1,3 +1,5 @@
+import igraph as ig
+import matplotlib.pyplot as plt
 import random as r
 import math as m
 
@@ -76,5 +78,4 @@ class Graph:
 
 
 if __name__ == "__main__":
-    g = Graph(4, 0.5)
-    print(g._dists)
+    pass
