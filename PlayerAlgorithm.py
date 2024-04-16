@@ -45,7 +45,7 @@ class PlayerAlgorithm:
     def makeMove(self, vertex: int, playerIndex: int):
         self.players[playerIndex].add_facility(vertex)
 
-    #randomly enerate players with values assessments ranging from 1 to 5
+    #randomly generate players with values assessments ranging from 1 to 5
     def gen_players(self, num_players, num_vertices):
         for i in range(num_players):
             values = {}

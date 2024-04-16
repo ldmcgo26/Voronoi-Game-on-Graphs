@@ -4,7 +4,7 @@ from Graph import Graph
 from PlayerAlgorithm import PlayerAlgorithm
 import math as m
 
-def showGraph(g: Graph, facilities: list[int], pa: PlayerAlgorithm):
+def showGraph(g: Graph, pa: PlayerAlgorithm):
 
     graph = ig.Graph(directed=False)
 

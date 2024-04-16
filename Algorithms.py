@@ -63,7 +63,6 @@ if __name__ == "__main__":
     for i in range(num_players):
         player_algs.append('uncontrolled max')
 
-    facilities = []
     #plays the game
     for i in range(num_rounds):
         for j in range(num_players):
@@ -73,10 +72,8 @@ if __name__ == "__main__":
                 next_facility = pick_max_vertex(pa, pa.players[j])
             elif player_algs[j] == 'uncontrolled max':
                 next_facility = pick_max_uncontrolled(pa, pa.players[j])
-            facilities.append(next_facility)
             pa.makeMove(next_facility, j)
-            showGraph(g, facilities, pa)
-
+            showGraph(g, pa)
 
     #Calculates who owns every vertex and prints out each player's controlled vertices
     pa.calc_controlled_vertices()
