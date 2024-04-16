@@ -39,19 +39,20 @@ def showGraph(g: Graph, pa: PlayerAlgorithm):
 
 
     #PLOT IT
-    fig, ax = plt.subplots(figsize=(5,5))
-    ig.plot(
-        graph,
-        target=ax,
-        layout="kamada_kawai", # print nodes in a circular layout
-        vertex_size=55,
-        vertex_color=vertex_color,
-        vertex_frame_width=4.0,
-        vertex_frame_color="white",
-        vertex_label=[i+1 for i in range(len(g._edgeDists))],
-        edge_label=[round(g._edgeDists[i][j], 2) for i in range(len(g._edgeDists)) for j in range(i, len(g._edgeDists[0])) if g._edgeDists[i][j] < m.inf and i!=j],
-        edge_width=[1],
-        edge_color=["#7142cf"]
-    )
+    # fig, ax = plt.subplots(figsize=(5,5))
+    # ig.plot(
+    #     graph,
+    #     target=ax,
+    #     layout="kamada_kawai", # print nodes in a circular layout
+    #     vertex_size=55,
+    #     vertex_color=vertex_color,
+    #     vertex_frame_width=4.0,
+    #     vertex_frame_color="white",
+    #     vertex_label=[i+1 for i in range(len(g._edgeDists))],
+    #     edge_label=[round(g._edgeDists[i][j], 2) for i in range(len(g._edgeDists)) for j in range(i, len(g._edgeDists[0])) if g._edgeDists[i][j] < m.inf and i!=j],
+    #     edge_width=[1],
+    #     edge_color=["#7142cf"]
+    # )
 
-    plt.show()
+    # plt.show()
+    return graph
