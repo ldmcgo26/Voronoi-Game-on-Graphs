@@ -18,27 +18,33 @@ def showGraph(g: Graph, facilities: list[int], pa: PlayerAlgorithm):
             if g._edgeDists[i][j] < m.inf:
                 graph.add_edge(i, j, weight=g._edgeDists[i][j])
 
+    #Assigns each vertex a color
     colors = ["#3f90da", "#ffa90e", "#bd1f01", "#94a4a2", "#832db6", "#a96b59", "#e76300", "#b9ac70", "#717581", "#92dadd"]
-    
+    colors_opaque = [color + '50' for color in colors]
     vertex_color = []
     for vertex in graph.vs:
         colored = False
         for i, player in enumerate(pa.players):
             if vertex.index in player.facilities:
-                vertex_color.append(colors[i])
+                vertex_color.append(colors[i])  # Use the original color for facilities
+                colored = True
+                break
+            elif player in pa.controlled_vertices and vertex.index in pa.controlled_vertices[player]:
+                vertex_color.append(colors_opaque[i])  # Use the opaque color for controlled vertices
                 colored = True
                 break
         if not colored:
-            vertex_color.append('gray')
+            vertex_color.append('gray')  # Default color for other vertices
 
 
+
+    #PLOT IT
     fig, ax = plt.subplots(figsize=(5,5))
     ig.plot(
         graph,
         target=ax,
         layout="kamada_kawai", # print nodes in a circular layout
         vertex_size=55,
-        # vertex_color=["blue" if vertex.index in facilities else "red" for vertex in graph.vs],
         vertex_color=vertex_color,
         vertex_frame_width=4.0,
         vertex_frame_color="white",
