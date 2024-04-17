@@ -73,6 +73,7 @@ if __name__ == "__main__":
             elif player_algs[j] == 'uncontrolled max':
                 next_facility = pick_max_uncontrolled(pa, pa.players[j])
             pa.makeMove(next_facility, j)
+            pa.calc_controlled_vertices()
             showGraph(g, pa)
 
     #Calculates who owns every vertex and prints out each player's controlled vertices
