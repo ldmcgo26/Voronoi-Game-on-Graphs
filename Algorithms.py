@@ -4,10 +4,10 @@ from Player import Player
 import random as r
 from Visualize import showGraph
 
-num_players = 3
-num_vertices = 15
-edge_density = 0.5
-num_rounds = 3
+num_players = 2
+num_vertices = 5
+edge_density = 0.7
+num_rounds = 1
 
 #random algorithm
 def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:

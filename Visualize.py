@@ -39,7 +39,7 @@ def showGraph(g: Graph, pa: PlayerAlgorithm):
 
 
     #PLOT IT
-    fig, ax = plt.subplots(figsize=(5,5))
+    fig, ax = plt.subplots(figsize=(12,7.5))
     ig.plot(
         graph,
         target=ax,
