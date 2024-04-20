@@ -4,10 +4,10 @@ from Player import Player
 import random as r
 from Visualize import showGraph
 
-num_players = 2
-num_vertices = 5
-edge_density = 0.7
-num_rounds = 1
+num_players = 3
+num_vertices = 15
+edge_density = 0.4
+num_rounds = 3
 
 #random algorithm
 def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:
@@ -52,6 +52,33 @@ def pick_max_uncontrolled(playerAlgorithm: PlayerAlgorithm, player: Player) -> i
             max_vertex = vertex
     return max_vertex
 
+#picks vertex that has the maximum total value between itself and all of its immediate neighbors
+def pick_max_neighbors(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
+    all_vertices = set(range(num_vertices))
+    facility_vertices = set()
+    for player in playerAlgorithm.players:
+        facility_vertices.update(player.facilities)
+    available_vertices = all_vertices - facility_vertices
+    
+    max_total_value = float('-inf')
+    max_vertex = None
+    for vertex in available_vertices:
+        total_value = player.values[vertex]
+        for neighbor in playerAlgorithm.graph._adjVerts[vertex]:
+            if neighbor in available_vertices:
+                total_value += player.values[neighbor]
+        if total_value > max_total_value:
+            max_total_value = total_value
+            max_vertex = vertex
+    return max_vertex
+
+#picks vertex that has maximum total value for all vertices within a certain distance of the facility
+def pick_max_within_distance(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
+    pass
+
+def greedy(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
+    pass
+
 if __name__ == "__main__":
 
     g = Graph(num_vertices, edge_density)
@@ -61,7 +88,7 @@ if __name__ == "__main__":
     #holds the algorithm each player (index) will use 
     player_algs = []
     for i in range(num_players):
-        player_algs.append('uncontrolled max')
+        player_algs.append('neighbors')
 
     #plays the game
     for i in range(num_rounds):
@@ -72,6 +99,8 @@ if __name__ == "__main__":
                 next_facility = pick_max_vertex(pa, pa.players[j])
             elif player_algs[j] == 'uncontrolled max':
                 next_facility = pick_max_uncontrolled(pa, pa.players[j])
+            elif player_algs[j] == 'neighbors':
+                next_facility = pick_max_neighbors(pa, pa.players[j])
             pa.makeMove(next_facility, j)
             pa.calc_controlled_vertices()
             showGraph(g, pa)
