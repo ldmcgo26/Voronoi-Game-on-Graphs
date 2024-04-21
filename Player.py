@@ -12,3 +12,6 @@ class Player:
 
     def add_facility(self, vertex: int):
         self.facilities.append(vertex)
+
+    def remove_facility(self, vertex: int):
+        self.facilities.remove(vertex)

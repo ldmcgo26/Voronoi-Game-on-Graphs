@@ -23,8 +23,8 @@ def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:
 def pick_max_vertex(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     all_vertices = set(range(num_vertices))
     facility_vertices = set()
-    for player in playerAlgorithm.players:
-        facility_vertices.update(player.facilities)
+    for p in playerAlgorithm.players:
+        facility_vertices.update(p.facilities)
 
     available_vertices = list(all_vertices - facility_vertices)
     max_value = 0
@@ -52,12 +52,12 @@ def pick_max_uncontrolled(playerAlgorithm: PlayerAlgorithm, player: Player) -> i
             max_vertex = vertex
     return max_vertex
 
-#picks vertex that has the maximum total value between itself and all of its immediate neighbors
+#picks vertex that has the maximum total value between itself and all of its immediate neighbors (can already be under that player's control)
 def pick_max_neighbors(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     all_vertices = set(range(num_vertices))
     facility_vertices = set()
-    for player in playerAlgorithm.players:
-        facility_vertices.update(player.facilities)
+    for p in playerAlgorithm.players:
+        facility_vertices.update(p.facilities)
     available_vertices = all_vertices - facility_vertices
     
     max_total_value = float('-inf')
@@ -72,12 +72,31 @@ def pick_max_neighbors(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
             max_vertex = vertex
     return max_vertex
 
-#picks vertex that has maximum total value for all vertices within a certain distance of the facility
-def pick_max_within_distance(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
-    pass
-
+#greedy, picks the vertex that increases the player's value the most
+#total value gained = that new vertex and all new vertices controlled by that facility that weren't already
 def greedy(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
-    pass
+    playerAlgorithm.calc_controlled_vertices()
+    all_vertices = set(range(num_vertices))
+    facility_vertices = set()
+    for p in playerAlgorithm.players:
+        facility_vertices.update(p.facilities)
+    available_vertices = list(all_vertices - facility_vertices - set(playerAlgorithm.controlled_vertices[player]))
+    
+    max_total_value = float('-inf')
+    max_vertex = None
+    
+    for vertex in available_vertices:
+        player.add_facility(vertex)
+        playerAlgorithm.calc_controlled_vertices()
+        total_value = 0
+        for v in playerAlgorithm.controlled_vertices[player]:
+            total_value += player.values[v]
+        if total_value > max_total_value:
+            max_total_value = total_value
+            max_vertex = vertex
+        player.remove_facility(vertex)
+                
+    return max_vertex
 
 if __name__ == "__main__":
 
@@ -88,7 +107,7 @@ if __name__ == "__main__":
     #holds the algorithm each player (index) will use 
     player_algs = []
     for i in range(num_players):
-        player_algs.append('neighbors')
+        player_algs.append('greedy')
 
     #plays the game
     for i in range(num_rounds):
@@ -101,6 +120,8 @@ if __name__ == "__main__":
                 next_facility = pick_max_uncontrolled(pa, pa.players[j])
             elif player_algs[j] == 'neighbors':
                 next_facility = pick_max_neighbors(pa, pa.players[j])
+            elif player_algs[j] == 'greedy':
+                next_facility = greedy(pa, pa.players[j])
             pa.makeMove(next_facility, j)
             pa.calc_controlled_vertices()
             showGraph(g, pa)
