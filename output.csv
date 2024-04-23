@@ -1,0 +1,6 @@
+Player #,# Rounds,# Vertices,# Players,Edge Density,Algorithm,Ranking,Score,# Controlled Vertices
+1,4,300,5,0.05,uncontrolled max,5,95,31
+2,4,300,5,0.05,neighbors,2,241,78
+3,4,300,5,0.05,random,3,121,36
+4,4,300,5,0.05,random,4,107,37
+5,4,300,5,0.05,greedy,1,339,118

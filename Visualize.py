@@ -38,20 +38,35 @@ def showGraph(g: Graph, pa: PlayerAlgorithm):
 
 
 
-    #PLOT IT
+    # Plot it
     fig, ax = plt.subplots(figsize=(12,7.5))
+    layout = graph.layout("kamada_kawai")
     ig.plot(
         graph,
         target=ax,
-        layout="kamada_kawai", # print nodes in a circular layout
-        vertex_size=55,
+        layout=layout,
+        vertex_size=100,
         vertex_color=vertex_color,
         vertex_frame_width=4.0,
         vertex_frame_color="white",
         vertex_label=[i+1 for i in range(len(g._edgeDists))],
-        edge_label=[round(g._edgeDists[i][j], 2) for i in range(len(g._edgeDists)) for j in range(i, len(g._edgeDists[0])) if g._edgeDists[i][j] < m.inf and i!=j],
         edge_width=[1],
         edge_color=["#7142cf"]
     )
 
+    # Annotate edges with lengths
+    for edge in graph.es:
+        source_pos = layout[edge.source]
+        target_pos = layout[edge.target]
+        x = (source_pos[0] + target_pos[0]) / 2
+        y = (source_pos[1] + target_pos[1]) / 2
+        dx = target_pos[0] - source_pos[0]
+        dy = target_pos[1] - source_pos[1]
+        length = edge["weight"]
+        
+        # Offset the label position slightly above the edge line
+        offset = 0.05
+        ax.text(x + offset * dy, y - offset * dx, f'{length:.1f}', fontsize=8, ha='center', va='center', color='black')
+
+    plt.tight_layout()
     plt.show()

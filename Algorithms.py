@@ -2,12 +2,13 @@ from PlayerAlgorithm import PlayerAlgorithm
 from Graph import Graph
 from Player import Player
 import random as r
+import pandas as pd
 from Visualize import showGraph
 
-num_players = 3
-num_vertices = 15
-edge_density = 0.4
-num_rounds = 3
+num_players = 5
+num_vertices = 300
+edge_density = 0.05
+num_rounds = 4
 
 #random algorithm
 def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:
@@ -98,6 +99,10 @@ def greedy(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
                 
     return max_vertex
 
+#predictive algorithm
+def predictive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
+    pass
+
 if __name__ == "__main__":
 
     g = Graph(num_vertices, edge_density)
@@ -105,9 +110,10 @@ if __name__ == "__main__":
     pa.gen_players(num_players, num_vertices)
 
     #holds the algorithm each player (index) will use 
+    algs = ['random', 'max', 'uncontrolled max', 'neighbors', 'greedy']
     player_algs = []
     for i in range(num_players):
-        player_algs.append('greedy')
+        player_algs.append(r.choice(algs))
 
     #plays the game
     for i in range(num_rounds):
@@ -124,16 +130,44 @@ if __name__ == "__main__":
                 next_facility = greedy(pa, pa.players[j])
             pa.makeMove(next_facility, j)
             pa.calc_controlled_vertices()
-            showGraph(g, pa)
+            #visualize the graph
+            # showGraph(g, pa)
+
+    results = [['Player #', '# Rounds', '# Vertices', '# Players', 'Edge Density', 'Algorithm', 'Ranking', 'Score', '# Controlled Vertices']]
 
     #Calculates who owns every vertex and prints out each player's controlled vertices
     pa.calc_controlled_vertices()
     for i in (pa.controlled_vertices.values()):
         print(i)
     
-    #Maybe calculate each players total value here? Go through each player's controlled vertices and count up their values
-    for player in pa.players:
-        player_total = 0
-        for vertex in pa.controlled_vertices[player]:
-            player_total += player.values[vertex]
-        print(player_total)
+    ranked_payoff = pa.calc_ranked_payoff()
+    print(ranked_payoff)
+    
+    for p in range(num_players):
+        toAppend = []
+        #Player #, # Rounds, # Vertices, # Players, # Edge Density
+        toAppend.append(p+1)
+        toAppend.append(num_rounds)
+        toAppend.append(num_vertices)
+        toAppend.append(num_players)
+        toAppend.append(edge_density)
+        #this player's algorithm
+        toAppend.append(player_algs[p])
+        #this player's ranking
+        toAppend.append(list(ranked_payoff.keys()).index(pa.players[p]) + 1)
+        #this player's score
+        toAppend.append(ranked_payoff[pa.players[p]])
+        #this player's # controlled vertices
+        toAppend.append(len(pa.controlled_vertices[pa.players[p]]))
+
+        results.append(toAppend)
+
+    # File path for CSV output
+    csv_file_path = "output.csv"
+
+    # Create a DataFrame from the data
+    df = pd.DataFrame(results)
+
+    # Write DataFrame to CSV file
+    df.to_csv(csv_file_path, index=False, header=False)
+

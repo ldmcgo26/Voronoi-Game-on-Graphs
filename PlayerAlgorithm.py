@@ -1,6 +1,7 @@
 from Graph import Graph
 from Player import Player
 import random as r
+import numpy as np
 
 class PlayerAlgorithm:
 
@@ -52,3 +53,19 @@ class PlayerAlgorithm:
             for j in range(num_vertices):
                 values[j] = r.randint(1,5)
             self.players.append(Player(values))
+
+    #returns a dict the players mapped to their total value
+    #run this after the game is over probably
+    def calc_ranked_payoff(self) -> dict[Player, int]:
+        payoff = {}
+        self.calc_controlled_vertices()
+        for player in self.players:
+            player_total = 0
+            for vertex in self.controlled_vertices[player]:
+                player_total += player.values[vertex]
+            payoff[player] = player_total
+        keys = list(payoff.keys())
+        values = list(payoff.values())
+        sorted_value_index = np.argsort(values)[::-1]
+        ranked_payoff = {keys[i]: values[i] for i in sorted_value_index}
+        return ranked_payoff
