@@ -49,10 +49,16 @@ class PlayerAlgorithm:
     #randomly generate players with values assessments ranging from 1 to 5
     def gen_players(self, num_players, num_vertices):
         for i in range(num_players):
-            values = {}
-            for j in range(num_vertices):
-                values[j] = r.randint(1,5)
-            self.players.append(Player(values))
+            # Generate random values for the player
+            values = np.random.randint(1, 6, num_vertices)
+            # Calculate the total sum of the values
+            total_sum = np.sum(values)
+            # Scale the values to ensure the same total sum for each player
+            values = values * (num_vertices * 3) / total_sum  # Adjust the multiplier as needed
+            # Convert the NumPy array to a dictionary
+            values_dict = {j: value for j, value in enumerate(values)}
+            # Create a Player object with the random values
+            self.players.append(Player(values_dict))
 
     #returns a dict the players mapped to their total value
     #run this after the game is over probably
