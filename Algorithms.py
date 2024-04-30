@@ -127,7 +127,7 @@ if __name__ == "__main__":
     # player_algs = []
     # for i in range(num_players):
     #     player_algs.append(r.choice(algs))
-    player_algs = ['greedy', 'player', 'greedy']
+    player_algs = ['greedy', 'player', 'player']
 
     #plays the game
     for i in range(num_rounds):
@@ -155,7 +155,8 @@ if __name__ == "__main__":
     #     print(i)
     
     ranked_payoff = pa.calc_ranked_payoff()
-    # print(ranked_payoff)
+    for player, score in ranked_payoff.items():
+        print(f"Player {pa.players.index(player)+1}: {round(score*10)}") 
     
     for p in range(num_players):
         toAppend = []

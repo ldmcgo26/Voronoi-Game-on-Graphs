@@ -1,4 +1,4 @@
 Player #,# Rounds,# Vertices,# Players,Edge Density,Algorithm,Ranking,Score,# Controlled Vertices
-1,2,9,3,0.5,greedy,2,10.125,3
-2,2,9,3,0.5,player,1,10.565217391304348,3
-3,2,9,3,0.5,greedy,3,4.909090909090909,2
+1,2,9,3,0.5,greedy,3,8.113522902965606,2
+2,2,9,3,0.5,player,2,9.871226836079542,2
+3,2,9,3,0.5,player,1,17.155285408582518,5
