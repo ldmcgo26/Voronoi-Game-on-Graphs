@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from Graph import Graph
 from PlayerAlgorithm import PlayerAlgorithm
 import math as m
+import numpy as np
 
 def showGraph(g: Graph, pa: PlayerAlgorithm):
 
@@ -36,22 +37,21 @@ def showGraph(g: Graph, pa: PlayerAlgorithm):
         if not colored:
             vertex_color.append('gray')  # Default color for other vertices
 
-
-
     # Plot it
-    fig, ax = plt.subplots(figsize=(12,7.5))
+    fig, (ax_main, ax_legend) = plt.subplots(1, 2, figsize=(12, 7.5))
     layout = graph.layout("kamada_kawai")
     ig.plot(
         graph,
-        target=ax,
+        target=ax_main,
         layout=layout,
         vertex_size=100,
         vertex_color=vertex_color,
         vertex_frame_width=4.0,
         vertex_frame_color="white",
-        vertex_label=[i+1 for i in range(len(g._edgeDists))],
+        vertex_label=[i + 1 for i in range(len(g._edgeDists))],
         edge_width=[1],
-        edge_color=["#7142cf"]
+        edge_color="#7142cf",
+        edge_opacity=0.5  # Set edge transparency
     )
 
     # Annotate edges with lengths
@@ -66,7 +66,19 @@ def showGraph(g: Graph, pa: PlayerAlgorithm):
         
         # Offset the label position slightly above the edge line
         offset = 0.05
-        ax.text(x + offset * dy, y - offset * dx, f'{length:.1f}', fontsize=8, ha='center', va='center', color='black')
+        annotation = ax_main.text(x + offset * dy, y - offset * dx, f'{length:.0f}', fontsize=10, ha='center', va='center', fontweight='bold')
+
+        # Adjust background color and transparency
+        annotation.set_bbox(dict(facecolor='white', alpha=0.7, edgecolor='none'))
+
+    legend_text = "\n".join([f'Vertex {v+1} : Value: {pa.players[2].values[v]*10:.0f}' for v in range(len(g._dists))])  # Create legend text for each player
+    ax_legend.plot([], [], label=legend_text)  # Create empty plot to represent each player with their facilities and values
+
+    # Add legend to the subplot
+    ax_legend.legend(loc='upper right')
+    ax_legend.axis('off')  # Turn off axis for the legend subplot
 
     plt.tight_layout()
     plt.show()
+
+

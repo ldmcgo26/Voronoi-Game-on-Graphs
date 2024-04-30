@@ -105,69 +105,76 @@ def predictive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 
 if __name__ == "__main__":
     #list of possible algorithms
-    algs = ['random', 'max', 'uncontrolled max', 'neighbors', 'greedy']
+    algs = ['random', 'max', 'uncontrolled max', 'neighbors', 'greedy', 'player']
     #CSV
     results = [['Player #', '# Rounds', '# Vertices', '# Players', 'Edge Density', 'Algorithm', 'Ranking', 'Score', '# Controlled Vertices']]
 
-    for z in range(100):
-        num_players = r.randint(2, 6)
-        num_vertices = r.randint(50, 250)
-        edge_density = r.random()/2
-        num_rounds = r.randint(2,5)
+    # for z in range(100):
+    num_players = 3
+    num_vertices = 9
+    edge_density = .5
+    num_rounds = 2
+    # num_players = r.randint(2, 6)
+    # num_vertices = r.randint(50, 250)
+    # edge_density = r.random()/2
+    # num_rounds = r.randint(2,5)
 
-        g = Graph(num_vertices, edge_density)
-        pa = PlayerAlgorithm(g, players=[])
-        pa.gen_players(num_players, num_vertices)
+    g = Graph(num_vertices, edge_density)
+    pa = PlayerAlgorithm(g, players=[])
+    pa.gen_players(num_players, num_vertices)
 
-        #holds the algorithm each player (index) will use 
-        player_algs = []
-        for i in range(num_players):
-            player_algs.append(r.choice(algs))
+    #holds the algorithm each player (index) will use 
+    # player_algs = []
+    # for i in range(num_players):
+    #     player_algs.append(r.choice(algs))
+    player_algs = ['greedy', 'player', 'greedy']
 
-        #plays the game
-        for i in range(num_rounds):
-            for j in range(num_players):
-                if player_algs[j] == 'random':
-                    next_facility = pick_random_facility(pa)
-                elif player_algs[j] == 'max':
-                    next_facility = pick_max_vertex(pa, pa.players[j])
-                elif player_algs[j] == 'uncontrolled max':
-                    next_facility = pick_max_uncontrolled(pa, pa.players[j])
-                elif player_algs[j] == 'neighbors':
-                    next_facility = pick_max_neighbors(pa, pa.players[j])
-                elif player_algs[j] == 'greedy':
-                    next_facility = greedy(pa, pa.players[j])
-                pa.makeMove(next_facility, j)
-                # pa.calc_controlled_vertices()
-                #visualize the graph
-                # showGraph(g, pa)
+    #plays the game
+    for i in range(num_rounds):
+        for j in range(num_players):
+            if player_algs[j] == 'random':
+                next_facility = pick_random_facility(pa)
+            elif player_algs[j] == 'max':
+                next_facility = pick_max_vertex(pa, pa.players[j])
+            elif player_algs[j] == 'uncontrolled max':
+                next_facility = pick_max_uncontrolled(pa, pa.players[j])
+            elif player_algs[j] == 'neighbors':
+                next_facility = pick_max_neighbors(pa, pa.players[j])
+            elif player_algs[j] == 'greedy':
+                next_facility = greedy(pa, pa.players[j])
+            elif player_algs[j] == 'player':
+                next_facility = int(input('Pick your next facility: '))-1
+            pa.makeMove(next_facility, j)
+            pa.calc_controlled_vertices()
+            # visualize the graph
+            showGraph(g, pa)
 
-        #Calculates who owns every vertex and prints out each player's controlled vertices
-        # pa.calc_controlled_vertices()
-        # for i in (pa.controlled_vertices.values()):
-        #     print(i)
-        
-        ranked_payoff = pa.calc_ranked_payoff()
-        # print(ranked_payoff)
-        
-        for p in range(num_players):
-            toAppend = []
-            #Player #, # Rounds, # Vertices, # Players, # Edge Density
-            toAppend.append(p+1)
-            toAppend.append(num_rounds)
-            toAppend.append(num_vertices)
-            toAppend.append(num_players)
-            toAppend.append(edge_density)
-            #this player's algorithm
-            toAppend.append(player_algs[p])
-            #this player's ranking
-            toAppend.append(list(ranked_payoff.keys()).index(pa.players[p]) + 1)
-            #this player's score
-            toAppend.append(ranked_payoff[pa.players[p]])
-            #this player's # controlled vertices
-            toAppend.append(len(pa.controlled_vertices[pa.players[p]]))
+    #Calculates who owns every vertex and prints out each player's controlled vertices
+    # pa.calc_controlled_vertices()
+    # for i in (pa.controlled_vertices.values()):
+    #     print(i)
+    
+    ranked_payoff = pa.calc_ranked_payoff()
+    # print(ranked_payoff)
+    
+    for p in range(num_players):
+        toAppend = []
+        #Player #, # Rounds, # Vertices, # Players, # Edge Density
+        toAppend.append(p+1)
+        toAppend.append(num_rounds)
+        toAppend.append(num_vertices)
+        toAppend.append(num_players)
+        toAppend.append(edge_density)
+        #this player's algorithm
+        toAppend.append(player_algs[p])
+        #this player's ranking
+        toAppend.append(list(ranked_payoff.keys()).index(pa.players[p]) + 1)
+        #this player's score
+        toAppend.append(ranked_payoff[pa.players[p]])
+        #this player's # controlled vertices
+        toAppend.append(len(pa.controlled_vertices[pa.players[p]]))
 
-            results.append(toAppend)
+        results.append(toAppend)
 
     # File path for CSV output
     csv_file_path = "output.csv"

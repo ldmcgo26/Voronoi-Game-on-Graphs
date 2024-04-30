@@ -50,7 +50,7 @@ class PlayerAlgorithm:
     def gen_players(self, num_players, num_vertices):
         for i in range(num_players):
             # Generate random values for the player
-            values = np.random.randint(1, 6, num_vertices)
+            values = np.random.random_sample(num_vertices)+.1
             # Calculate the total sum of the values
             total_sum = np.sum(values)
             # Scale the values to ensure the same total sum for each player
