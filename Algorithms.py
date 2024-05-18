@@ -8,14 +8,9 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 import numpy as np
 
-num_players = 5
-num_vertices = 200
-edge_density = 0.05
-num_rounds = 4
-
 #random algorithm
 def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for player in playerAlgorithm.players:
         facility_vertices.update(player.facilities)
@@ -25,7 +20,7 @@ def pick_random_facility(playerAlgorithm: PlayerAlgorithm) -> int:
 
 #picks maximum value vertex (it can under player's control already)
 def pick_max_vertex(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -42,7 +37,7 @@ def pick_max_vertex(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 #picks maximum value vertex that isn't already under player's control
 def pick_max_uncontrolled(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -58,7 +53,7 @@ def pick_max_uncontrolled(playerAlgorithm: PlayerAlgorithm, player: Player) -> i
 
 #picks vertex that has the maximum total value between itself and all of its immediate neighbors (can already be under that player's control)
 def pick_max_neighbors(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -80,11 +75,11 @@ def pick_max_neighbors(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 #total value gained = that new vertex and all new vertices controlled by that facility that weren't already
 def greedy(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
-    available_vertices = list(all_vertices - facility_vertices - set(playerAlgorithm.controlled_vertices[player]))
+    available_vertices = list(all_vertices - facility_vertices)
     
     max_total_value = float('-inf')
     max_vertex = None
@@ -108,7 +103,7 @@ def greedy(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 #predictive algorithm assumes all other players are playing greedy alg
 def predictive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -145,7 +140,7 @@ def predictive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 #sabotage
 def sabotage(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -170,7 +165,7 @@ def sabotage(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 #adaptive: changes strategy based on the players current rank
 def adaptive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -178,7 +173,6 @@ def adaptive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 
     # Calculate the current score and rank of the player
     ranked_payoff = playerAlgorithm.calc_ranked_payoff()
-    current_score = ranked_payoff[player]
     player_rank = list(ranked_payoff.keys()).index(player) + 1
 
     if (len(facility_vertices) == 0):
@@ -213,7 +207,7 @@ def adaptive(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 
 def adaptive2(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -228,7 +222,9 @@ def adaptive2(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
         next_player_available_vertices = list(all_vertices - facility_vertices - set(playerAlgorithm.controlled_vertices[next_player]))
         next_player_values = [next_player.values[v] for v in next_player_available_vertices]
         next_player_values.sort(reverse=True)
-        gap = next_player_values[0] - (next_player_values[1] if len(next_player_values) > 1 else 0)
+        gap = 0
+        if len(next_player_values) > 0:
+            gap = next_player_values[0] - (next_player_values[1] if len(next_player_values) > 1 else 0)
 
         # Calculate the adjusted value for the current player
         adjusted_value = player.values[vertex] + gap
@@ -242,7 +238,7 @@ def adaptive2(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 
 def McGoldrick(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -282,7 +278,7 @@ def McGoldrick(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 
 def Bingham(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     playerAlgorithm.calc_controlled_vertices()
-    all_vertices = set(range(num_vertices))
+    all_vertices = set(range(len(pa.graph._dists)))
     facility_vertices = set()
     for p in playerAlgorithm.players:
         facility_vertices.update(p.facilities)
@@ -306,7 +302,9 @@ def Bingham(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
     next_player_values = [next_player.values[v] for v in next_player_available_vertices]
     next_player_values_copy = next_player_values.copy()
     next_player_values.sort(reverse=True)
-    gap = next_player_values[0] - (next_player_values[1] if len(next_player_values) > 1 else 0)
+    gap = 0
+    if len(next_player_values) > 0:
+        gap = next_player_values[0] - (next_player_values[1] if len(next_player_values) > 1 else 0)
     next_player_max_index = next_player_values_copy.index(next_player_values[0])
     newValues[next_player_max_index] = newValues[next_player_max_index] + gap*y
 
@@ -326,7 +324,8 @@ def Bingham(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
             newValues[vertex] = newValues[vertex] + other_players_total*y
 
             avgEdgeWt = playerAlgorithm.graph.get_average_edge_length()
-            newValues[vertex] = newValues[vertex] - (avgEdgeWt / (len(available_vertices)/(len(facility_vertices)/len(playerAlgorithm.players))))
+            
+            newValues[vertex] = newValues[vertex] - (avgEdgeWt / (len(available_vertices)/(len(facility_vertices)/len(playerAlgorithm.players)+1)))
 
     oldValues = player.values
     player.values = newValues
@@ -339,89 +338,89 @@ def Bingham(playerAlgorithm: PlayerAlgorithm, player: Player) -> int:
 
 if __name__ == "__main__":
     #list of possible algorithms
-    algs = ['random', 'max', 'uncontrolled max', 'neighbors', 'greedy', 'predictive', 'sabotage', 'adaptive', 'adaptive2']
+    algs = ['random', 'max', 'uncontrolled max', 'neighbors', 'greedy', 'predictive', 'sabotage', 'adaptive', 'adaptive2', 'Bingham']
     #CSV
     results = [['Player #', '# Rounds', '# Vertices', '# Players', 'Edge Density', 'Algorithm', 'Ranking', 'Score', '# Controlled Vertices']]
 
-    # for z in range(100):
-    num_players = 5
-    num_vertices = 100
-    edge_density = .3
-    num_rounds = 5
-    # num_players = r.randint(2, 6)
-    # num_vertices = r.randint(50, 100)
-    # edge_density = r.random()/2
-    # num_rounds = r.randint(2,5)
+    for z in range(1000):
+    # num_players = 5
+    # num_vertices = 100
+    # edge_density = .3
+    # num_rounds = 5
+        num_players = r.randint(2, 6)
+        num_vertices = r.randint(50, 100)
+        edge_density = r.random()/4+.25
+        num_rounds = r.randint(2,6)
 
-    g = Graph(num_vertices, edge_density)
-    pa = PlayerAlgorithm(g, players=[])
-    pa.gen_players(num_players, num_vertices)
+        g = Graph(num_vertices, edge_density)
+        pa = PlayerAlgorithm(g, players=[])
+        pa.gen_players(num_players, num_vertices)
 
-    #holds the algorithm each player (index) will use 
-    # player_algs = []
-    # for i in range(num_players):
-    #     player_algs.append(r.choice(algs))
-    player_algs = ['adaptive', 'McGoldrick', 'adaptive2', 'greedy', 'greedy']
+        #holds the algorithm each player (index) will use
+        player_algs = []
+        for i in range(num_players):
+            player_algs.append(r.choice(algs))
+        # player_algs = ['adaptive', 'Bingham', 'adaptive2', 'greedy', 'greedy']
 
-    #plays the game
-    for i in range(num_rounds):
-        for j in range(num_players):
-            if player_algs[j] == 'random':
-                next_facility = pick_random_facility(pa)
-            elif player_algs[j] == 'max':
-                next_facility = pick_max_vertex(pa, pa.players[j])
-            elif player_algs[j] == 'uncontrolled max':
-                next_facility = pick_max_uncontrolled(pa, pa.players[j])
-            elif player_algs[j] == 'neighbors':
-                next_facility = pick_max_neighbors(pa, pa.players[j])
-            elif player_algs[j] == 'greedy':
-                next_facility = greedy(pa, pa.players[j])
-            elif player_algs[j] == 'predictive':
-                next_facility = predictive(pa, pa.players[j])
-            elif player_algs[j] == 'sabotage':
-                next_facility = sabotage(pa, pa.players[j])
-            elif player_algs[j] == 'adaptive':
-                next_facility = adaptive(pa, pa.players[j])
-            elif player_algs[j] == 'adaptive2':
-                next_facility = adaptive2(pa, pa.players[j])
-            elif player_algs[j] == 'McGoldrick':
-                next_facility = McGoldrick(pa, pa.players[j])
-            elif player_algs[j] == 'Bingham':
-                next_facility = Bingham(pa, pa.players[j])
-            elif player_algs[j] == 'player':
-                next_facility = int(input('Pick your next facility: '))-1
-            pa.makeMove(next_facility, j)
-            pa.calc_controlled_vertices()
-            # visualize the graph
-            # showGraph(g, pa)
+        #plays the game
+        for i in range(num_rounds):
+            for j in range(num_players):
+                if player_algs[j] == 'random':
+                    next_facility = pick_random_facility(pa)
+                elif player_algs[j] == 'max':
+                    next_facility = pick_max_vertex(pa, pa.players[j])
+                elif player_algs[j] == 'uncontrolled max':
+                    next_facility = pick_max_uncontrolled(pa, pa.players[j])
+                elif player_algs[j] == 'neighbors':
+                    next_facility = pick_max_neighbors(pa, pa.players[j])
+                elif player_algs[j] == 'greedy':
+                    next_facility = greedy(pa, pa.players[j])
+                elif player_algs[j] == 'predictive':
+                    next_facility = predictive(pa, pa.players[j])
+                elif player_algs[j] == 'sabotage':
+                    next_facility = sabotage(pa, pa.players[j])
+                elif player_algs[j] == 'adaptive':
+                    next_facility = adaptive(pa, pa.players[j])
+                elif player_algs[j] == 'adaptive2':
+                    next_facility = adaptive2(pa, pa.players[j])
+                elif player_algs[j] == 'McGoldrick':
+                    next_facility = McGoldrick(pa, pa.players[j])
+                elif player_algs[j] == 'Bingham':
+                    next_facility = Bingham(pa, pa.players[j])
+                elif player_algs[j] == 'player':
+                    next_facility = int(input('Pick your next facility: '))-1
+                pa.makeMove(next_facility, j)
+                pa.calc_controlled_vertices()
+                # visualize the graph
+                # showGraph(g, pa)
 
-    #Calculates who owns every vertex and prints out each player's controlled vertices
-    # pa.calc_controlled_vertices()
-    # for i in (pa.controlled_vertices.values()):
-    #     print(i)
-    
-    ranked_payoff = pa.calc_ranked_payoff()
-    for player, score in ranked_payoff.items():
-        print(f"Player {pa.players.index(player)+1}: {round(score*10)}") 
-    
-    for p in range(num_players):
-        toAppend = []
-        #Player #, # Rounds, # Vertices, # Players, # Edge Density
-        toAppend.append(p+1)
-        toAppend.append(num_rounds)
-        toAppend.append(num_vertices)
-        toAppend.append(num_players)
-        toAppend.append(edge_density)
-        #this player's algorithm
-        toAppend.append(player_algs[p])
-        #this player's ranking
-        toAppend.append(list(ranked_payoff.keys()).index(pa.players[p]) + 1)
-        #this player's score
-        toAppend.append(ranked_payoff[pa.players[p]])
-        #this player's # controlled vertices
-        toAppend.append(len(pa.controlled_vertices[pa.players[p]]))
+        #Calculates who owns every vertex and prints out each player's controlled vertices
+        # pa.calc_controlled_vertices()
+        # for i in (pa.controlled_vertices.values()):
+        #     print(i)
+        
+        ranked_payoff = pa.calc_ranked_payoff()
+        # for player, score in ranked_payoff.items():
+            # print(f"Player {pa.players.index(player)+1}: {round(score*10)}") 
+        
+        for p in range(num_players):
+            toAppend = []
+            #Player #, # Rounds, # Vertices, # Players, # Edge Density
+            toAppend.append(p+1)
+            toAppend.append(num_rounds)
+            toAppend.append(num_vertices)
+            toAppend.append(num_players)
+            toAppend.append(edge_density)
+            #this player's algorithm
+            toAppend.append(player_algs[p])
+            #this player's ranking
+            toAppend.append(list(ranked_payoff.keys()).index(pa.players[p]) + 1)
+            #this player's score
+            toAppend.append(ranked_payoff[pa.players[p]])
+            #this player's # controlled vertices
+            toAppend.append(len(pa.controlled_vertices[pa.players[p]]))
 
-        results.append(toAppend)
+            results.append(toAppend)
 
     # File path for CSV output
     csv_file_path = "output.csv"

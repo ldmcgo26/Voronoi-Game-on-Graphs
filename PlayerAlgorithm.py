@@ -34,6 +34,7 @@ class PlayerAlgorithm:
         closest_player = None
         for player in self.players:
             for facility in player.facilities:
+                distance = float('inf')
                 if facility:
                     distance = self.graph._dists[vertex][facility]
                 if distance < min_distance:

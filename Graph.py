@@ -90,7 +90,7 @@ class Graph:
         for i in range(len(self._dists)):
             for j in range(i + 1, len(self._dists)):
                 if self._dists[i][j] != float('inf'):
-                    total_length += self._dists[i][j]**.7
+                    total_length += self._dists[i][j]**.5
                     num_edges += 1
 
         if num_edges == 0:
