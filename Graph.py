@@ -74,6 +74,29 @@ class Graph:
 
         return max(sum(self._dists, start=[]))
 
+    def get_average_edge_length(self) -> float:
+        """
+        Calculates the average edge length in the _dists matrix.
+
+        Returns:
+            float: The average edge length.
+        """
+        if not self._dists:
+            self._calculateDists()
+
+        total_length = 0
+        num_edges = 0
+
+        for i in range(len(self._dists)):
+            for j in range(i + 1, len(self._dists)):
+                if self._dists[i][j] != float('inf'):
+                    total_length += self._dists[i][j]**.7
+                    num_edges += 1
+
+        if num_edges == 0:
+            return 0  # Avoid division by zero
+
+        return total_length / num_edges
 
 if __name__ == "__main__":
     pass

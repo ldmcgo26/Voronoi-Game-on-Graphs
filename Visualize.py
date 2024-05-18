@@ -71,7 +71,7 @@ def showGraph(g: Graph, pa: PlayerAlgorithm):
         # Adjust background color and transparency
         annotation.set_bbox(dict(facecolor='white', alpha=0.7, edgecolor='none'))
 
-    legend_text = "\n".join([f'Player {p+1}  :  Vertex {v+1}  :  {round(pa.players[p].values[v]*10)}' for p in range(len(pa.players)) for v in range(len(g._dists))])  # Create legend text for each player
+    legend_text = "\n".join([f'Player {p+1}  :  Vertex {v+1}  :  {round(pa.players[p].values[v]*10)}' for p in range(len(pa.players)) for v in range(len(g._edgeDists))])  # Create legend text for each player
     ax_legend.plot([], [], label=legend_text)  # Create empty plot to represent each player with their facilities and values
 
     # Add legend to the subplot
